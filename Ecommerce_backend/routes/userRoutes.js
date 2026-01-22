@@ -10,10 +10,10 @@ const userRouter = Router();
 
 userRouter.get("/", getAllUsers);
 
-// userRouter.post("/"); // later
-
-userRouter.get("/:id", getUserDetails);
-userRouter.put("/:id", updateUser);
-userRouter.delete("/:id", destroyUser);
+userRouter
+  .route("/:id")
+  .get(getUserDetails)
+  .put(updateUser)
+  .delete(destroyUser);
 
 export default userRouter;

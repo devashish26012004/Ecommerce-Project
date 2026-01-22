@@ -1,12 +1,12 @@
-import User from "../model/userModel";
+import User from "../model/userModel.js";
 
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
 
-    if (users.length === 0) {
-      return res.status(404).send("No users found");
-    }
+    // if (users.length === 0) {
+    //   return res.status(404).send("No users found");
+    // }
 
     res.status(200).json(users);
   } catch (error) {
