@@ -6,9 +6,11 @@ import {
   updateUser,
 } from "../controller/userController.js";
 
+import { authentication, authorization } from "../middleware/authentication.js";
+
 const userRouter = Router();
 
-userRouter.get("/", getAllUsers);
+userRouter.get("/", authentication, authorization, getAllUsers);
 
 userRouter
   .route("/:id")

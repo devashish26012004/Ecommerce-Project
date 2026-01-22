@@ -4,7 +4,7 @@ import { authentication } from "../middleware/authentication.js";
 
 const authRouter = Router();
 
-authRouter.post("/login", authentication, loginUser);
+authRouter.post("/login",loginUser);
 
 authRouter.post("/signup", signupUser);
 
