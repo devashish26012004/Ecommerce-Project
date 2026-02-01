@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     res.status(200).json({
@@ -37,47 +37,53 @@ const loginUser = async (req, res) => {
   }
 };
 
-const signupUser = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword, role } =
-      req.body;
+    const { firstName, lastName, email, password, role } = req.body;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      !role
-    ) {
-      return res.status(400).send("All fields are required");
+    // Required fields check
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
-    if (password !== confirmPassword) {
-      return res.status(400).send("Passwords do not match");
-    }
-
+    // Check existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).send("User already exists");
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
-    const saltingRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltingRounds);
+    // Hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // Create user
     const newUser = new User({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
+      firstName,
+      lastName,
+      email,
       password: hashedPassword,
-      role: role,
+      role: role || "user",
     });
 
     await newUser.save();
-    res.status(201).send("Registered Successfully");
+
+    res.status(201).json({
+      success: true,
+      message: "Registered successfully",
+    });
   } catch (error) {
-    res.status(500).send("Internal server error");
+    console.error("Signup error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
-export { signupUser, loginUser };
+export { loginUser, registerUser };
